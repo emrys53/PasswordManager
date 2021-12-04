@@ -1,0 +1,1 @@
+addTest(sha256test MyLib)
