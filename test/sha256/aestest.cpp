@@ -151,8 +151,7 @@ TEST_CASE("AES SUB BYTES") {
     CHECK_EQ(state, copy);
 }
 
-TEST_CASE("AES ENCRYPT STANDARD") {
-    std::string s{"00112233445566778899aabbccddeeff"};
+TEST_CASE("AES ENCRYPT/DECRYPT STANDARD EXAMPLE") {
     std::array<uint32_t, 8> key{
             0x00010203,
             0x04050607,
@@ -171,6 +170,7 @@ TEST_CASE("AES ENCRYPT STANDARD") {
             temp += 0x11;
         }
     }
+    const auto copy = state;
     transpose_matrix(state);
     const auto output = encrypt_aes(state, key_expansion(key));
     std::vector<uint8_t> expected(16);
@@ -191,6 +191,66 @@ TEST_CASE("AES ENCRYPT STANDARD") {
     expected.at(14) = 0x60;
     expected.at(15) = 0x89;
     CHECK_EQ(output, expected);
+    transpose_matrix(state);
+    const auto decrypted = decrypt_aes(state, key_expansion(key));
+    CHECK_EQ(state, copy);
+}
+
+
+TEST_CASE("AES ENCRYPT/DECRYPT WITH PKCS7") {
+    std::string s{"AAAAAAAAAAAAAAA"};
+    std::array<uint32_t, 8> key{};
+    for (std::size_t i = 0; i < 8; ++i) {
+        key.at(i) = 0x41414141;
+    }
+    const auto encrypted = encrypt_aes(s, key);
+    std::vector<uint8_t> expected(16);
+    expected.at(0) = 0xe3;
+    expected.at(1) = 0xa7;
+    expected.at(2) = 0x30;
+    expected.at(3) = 0x6e;
+    expected.at(4) = 0x06;
+    expected.at(5) = 0x96;
+    expected.at(6) = 0x1d;
+    expected.at(7) = 0x7b;
+    expected.at(8) = 0x59;
+    expected.at(9) = 0x0c;
+    expected.at(10) = 0xbb;
+    expected.at(11) = 0x67;
+    expected.at(12) = 0x9b;
+    expected.at(13) = 0x6a;
+    expected.at(14) = 0x8a;
+    expected.at(15) = 0x8a;
+    CHECK_EQ(encrypted, expected);
+    const auto decrypted = decrypt_aes(encrypted, key);
+    CHECK_EQ(decrypted.size(), s.length());
+    for (std::size_t i = 0; i < decrypted.size(); ++i) {
+        CHECK_EQ(decrypted.at(i), static_cast<uint8_t >(s.at(i)));
+    }
+}
+
+TEST_CASE("AES RANDOM ENCRYPT/DECRYPT") {
+    std::string s{"213asdjkasdi21d,/a.sdkDLSADASDKAc,zxmcio3290412-ds;a.cxasdKASDA?S>DASDKASd"};
+    for (std::size_t i = 0; i < 256; ++i) {
+        const auto key = sha_256_digest(s);
+        const auto encrypted = encrypt_aes(s, key);
+        const auto decrypted = decrypt_aes(encrypted, key);
+        CHECK_EQ(decrypted.size(), s.length());
+        for (std::size_t j = 0; j < decrypted.size(); ++j) {
+            CHECK_EQ(decrypted.at(j), static_cast<uint8_t >(s.at(j)));
+        }
+        s.append(1, static_cast<char>(i));
+    }
+}
+
+TEST_CASE("AES DECRYPT CHECK INVALID PADDING") {
+    std::string s{"ABCDEFGH0"};
+    const auto key = sha_256_digest(s);
+    for (std::size_t i = 0; i < 256; ++i) {
+        CHECK_THROWS(s, key);
+        s.append(1, static_cast<char>(i));
+    }
+
 }
 
 

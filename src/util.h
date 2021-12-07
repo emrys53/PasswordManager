@@ -2,8 +2,8 @@
 // Created by emrys on 03.12.21.
 //
 
-#ifndef PASSWORDMANAGER_UTIL_H
-#define PASSWORDMANAGER_UTIL_H
+#ifndef UTIL_H
+#define UTIL_H
 
 #include <array>
 #include <bitset>
@@ -41,7 +41,7 @@ constexpr T swap_endian(T value) {
  * TODO Implement HMAC and use this.
  */
 template<typename std::size_t N>
-std::vector<uint32_t> string_pad0(const std::string_view &sw) {
+std::vector<uint32_t> string_pad_0(const std::string_view &sw) {
 
     static_assert(N > 31, "Minimum chunk size supported is 32 bits");
     static_assert((N & 31) == 0, "Chunk size has to be a multiple of 32");
@@ -51,15 +51,15 @@ std::vector<uint32_t> string_pad0(const std::string_view &sw) {
     }
 
 
-    std::vector<uint32_t> toReturn(N / 32);
-    std::memcpy(toReturn.data(), sw.data(), sw.length());
+    std::vector<uint32_t> to_return(N / 32);
+    std::memcpy(to_return.data(), sw.data(), sw.length());
     if constexpr(std::endian::native == std::endian::little) {
-        for (std::size_t i = 0; i < toReturn.size(); ++i) {
-            toReturn.at(i) = swap_endian(toReturn.at(i));
+        for (auto &i : to_return) {
+            i = swap_endian(i);
         }
     }
-    return toReturn;
+    return to_return;
 
 }
 
-#endif //PASSWORDMANAGER_UTIL_H
+#endif //UTIL_H

@@ -2,8 +2,8 @@
 // Created by emrys on 04.12.21.
 //
 
-#ifndef PASSWORDMANAGER_AES_H
-#define PASSWORDMANAGER_AES_H
+#ifndef AES_H
+#define AES_H
 
 
 #include <string>
@@ -184,7 +184,7 @@ std::vector<uint8_t> decrypt_aes(const std::string_view &, const std::array<uint
 
 std::vector<uint8_t> encrypt_aes(const std::vector<uint8_t> &, const std::array<uint32_t, 8> &);
 
-std::vector<uint8_t> decrypt_aes(const std::vector<uint8_t> &, const std::array<uint32_t, 60> &);
+std::vector<uint8_t> decrypt_aes(const std::vector<uint8_t> &, const std::array<uint32_t, 8> &);
 
 
 void transpose_matrix(std::array<std::array<uint8_t, 4>, 4> &);
@@ -210,4 +210,4 @@ uint32_t rotate_word(uint32_t);
 std::array<uint32_t, 60> key_expansion(const std::array<uint32_t, 8> &);
 
 
-#endif //PASSWORDMANAGER_AES_H
+#endif //AES_H

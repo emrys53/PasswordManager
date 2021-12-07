@@ -2,8 +2,8 @@
 // Created by emrys on 03.12.21.
 //
 
-#ifndef PASSWORDMANAGER_SHA256_H
-#define PASSWORDMANAGER_SHA256_H
+#ifndef SHA256_H
+#define SHA256_H
 
 #include <cstdint>
 #include <vector>
@@ -24,12 +24,12 @@ static constexpr uint8_t BIG_ENDIAN_ONE = 0x80;
 /*
  * Chunk size for sha256
  */
-static constexpr uint32_t SHA256_CHUNK_SIZE = 512;
+static constexpr uint32_t SHA_256_CHUNK_SIZE = 512;
 
 /*
  * Fractional parts of cubic roots of first 64 primes.
  */
-static constexpr std::array<uint32_t, 64> hash_constant = {
+static constexpr std::array<uint32_t, 64> HASH_CONSTANT = {
         0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1,
         0x923f82a4, 0xab1c5ed5, 0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3,
         0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174, 0xe49b69c1, 0xefbe4786,
@@ -47,7 +47,7 @@ static constexpr std::array<uint32_t, 64> hash_constant = {
 /*
  * Fractional parts of square roots of first 8 primes.
  */
-static constexpr std::array<uint32_t, 8> hash_initial_constant = {
+static constexpr std::array<uint32_t, 8> HASH_INITIAL_CONSTANT = {
         0x6a09e667,
         0xbb67ae85,
         0x3c6ef372,
@@ -59,9 +59,9 @@ static constexpr std::array<uint32_t, 8> hash_initial_constant = {
 };
 
 
-std::string sha256(const std::string_view &);
+std::string sha_256(const std::string_view &password);
 
-std::array<uint32_t, 8> sha256_digest(const std::string_view &);
+std::array<uint32_t, 8> sha_256_digest(const std::string_view &password);
 
 
-#endif //PASSWORDMANAGER_SHA256_H
+#endif //SHA256_H
