@@ -14,6 +14,7 @@
 #include <cstring>
 #include <bit>
 #include <functional>
+#include "util.h"
 
 /*
  * 1 in Bigendian required for padding.
