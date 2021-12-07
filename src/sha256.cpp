@@ -119,12 +119,12 @@ std::string sha256(const std::string_view &password) {
 
 
     const auto hashed_values = sha256_digest(password);
-    std::string toReturn;
+    std::string to_return;
     for (const std::size_t hashed_value : hashed_values) {
-        toReturn.append(std::bitset<32>(hashed_value).to_string());
+        to_return.append(std::bitset<32>(hashed_value).to_string());
     }
 
-    return toReturn;
+    return to_return;
 }
 
 

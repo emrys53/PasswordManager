@@ -7,10 +7,12 @@
 
 #include <array>
 #include <bitset>
-#include <iostream>
 #include <bit>
 #include <vector>
 #include <cstring>
+#include <cstdint>
+#include <string_view>
+#include <stdexcept>
 
 /*
  * Union for swapping from little endian to big endian.
@@ -31,10 +33,12 @@ constexpr T swap_endian(T value) {
     std::reverse(source.bit_8.begin(), source.bit_8.end());
     return source.bit_t;
 }
+
 /*
  * Pads the given string with 0 until it reaches N bits.
  * N has to be a multiple of 32 and positive.
  * If the given string has more than 512 bits it will throw an std::invalid_argument.
+ * TODO Implement HMAC and use this.
  */
 template<typename std::size_t N>
 std::vector<uint32_t> string_pad0(const std::string_view &sw) {
@@ -57,6 +61,5 @@ std::vector<uint32_t> string_pad0(const std::string_view &sw) {
     return toReturn;
 
 }
-
 
 #endif //PASSWORDMANAGER_UTIL_H

@@ -47,21 +47,21 @@ static constexpr std::array<uint32_t, 64> hash_constant = {
 /*
  * Fractional parts of square roots of first 8 primes.
  */
-static constexpr std::array<uint32_t, 8> hash_initial_constant = {0x6a09e667,
-                                                                  0xbb67ae85,
-                                                                  0x3c6ef372,
-                                                                  0xa54ff53a,
-                                                                  0x510e527f,
-                                                                  0x9b05688c,
-                                                                  0x1f83d9ab,
-                                                                  0x5be0cd19
+static constexpr std::array<uint32_t, 8> hash_initial_constant = {
+        0x6a09e667,
+        0xbb67ae85,
+        0x3c6ef372,
+        0xa54ff53a,
+        0x510e527f,
+        0x9b05688c,
+        0x1f83d9ab,
+        0x5be0cd19
 };
 
 
 std::string sha256(const std::string_view &);
 
 std::array<uint32_t, 8> sha256_digest(const std::string_view &);
-
 
 
 #endif //PASSWORDMANAGER_SHA256_H
