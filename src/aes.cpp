@@ -4,6 +4,7 @@
 
 #include "aes.h"
 
+
 // For debugging purposes.
 static void print_array(std::array<std::array<uint8_t, 4>, 4> &state) {
     for (std::size_t i = 0; i < 4; ++i) {
@@ -250,7 +251,7 @@ std::vector<uint8_t> encrypt_aes(const std::vector<uint8_t> &input, const std::a
 
 std::vector<uint8_t> decrypt_aes(const std::vector<uint8_t> &output, const std::array<uint32_t, 8> &key) {
     std::size_t len = output.size();
-    if (len == 0) {
+    if (len == 0 || len % 16 != 0) {
         throw std::invalid_argument("Output cannot be empty");
     }
     const auto expanded_key = key_expansion(key);
@@ -283,7 +284,3 @@ std::vector<uint8_t> decrypt_aes(const std::string_view &sw, const std::array<ui
     std::memcpy(input.data(), sw.data(), len);
     return decrypt_aes(input, key);
 }
-
-
-
-

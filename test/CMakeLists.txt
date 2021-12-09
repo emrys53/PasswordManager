@@ -1,4 +1,3 @@
-
 include(doctest)
 
 # small function to add and register tests in the subdirectories
@@ -10,3 +9,4 @@ function(addTest testName_ libName_)
 endfunction(addTest)
 
 add_subdirectory(sha256)
+add_subdirectory(aestest)

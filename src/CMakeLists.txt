@@ -6,7 +6,7 @@ set(LIBRARY_NAME MyLib)
 set(MODULE_HEADERS util.h sha256.h aes.h)
 
 # list all the code files of the module
-set(MODULE_SOURCES sha256.cpp aes.cpp)
+set(MODULE_SOURCES sha256.cpp aes.cpp util.cpp)
 
 # build the module library
 add_library(${LIBRARY_NAME} ${MODULE_HEADERS} ${MODULE_SOURCES})

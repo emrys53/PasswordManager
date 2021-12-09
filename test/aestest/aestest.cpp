@@ -247,7 +247,7 @@ TEST_CASE("AES DECRYPT CHECK INVALID PADDING") {
     std::string s{"ABCDEFGH0"};
     const auto key = sha_256_digest(s);
     for (std::size_t i = 0; i < 256; ++i) {
-        CHECK_THROWS(s, key);
+        CHECK_THROWS(decrypt_aes(s, key));
         s.append(1, static_cast<char>(i));
     }
 

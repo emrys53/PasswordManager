@@ -62,4 +62,6 @@ std::vector<uint32_t> string_pad_0(const std::string_view &sw) {
 
 }
 
+std::vector<uint8_t> hex_string_to_vector(const std::string_view &);
+
 #endif //UTIL_H

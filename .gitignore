@@ -34,3 +34,7 @@ cmake-build-*/
 *.exe
 *.out
 *.app
+
+#Temporary
+/encryption.txt
+/masterfile.txt
