@@ -22,5 +22,5 @@ add_executable(PasswordManager main.cpp)
 
 target_link_libraries(PasswordManager lib::MyLib)
 
-target_compile_options(${LIBRARY_NAME} PUBLIC -Wall -Wextra -Wconversion -pedantic -Wfatal-errors)
-target_compile_options(PasswordManager PUBLIC -Wall -Wextra -Wconversion -pedantic -Wfatal-errors)
+target_compile_options(${LIBRARY_NAME} PUBLIC -O3 -Wall -Wextra -Wconversion -pedantic -Wfatal-errors)
+target_compile_options(PasswordManager PUBLIC -O3 -Wall -Wextra -Wconversion -pedantic -Wfatal-errors)

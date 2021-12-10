@@ -138,7 +138,6 @@ void decrypt_file() {
     }
 }
 
-
 void cli() {
     char c;
     std::cout << "To encrypt enter 'e' to decrypt enter 'd', to quit enter q" << std::endl;
@@ -151,13 +150,10 @@ void cli() {
         exit(0);
     } else {
         std::cout << "Unknown option" << std::endl;
-
     }
 }
 
-
 int main() {
-    hex_string_to_vector("111111");
     cli();
 }
 
