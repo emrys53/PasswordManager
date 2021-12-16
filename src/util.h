@@ -13,6 +13,12 @@
 #include <cstdint>
 #include <string_view>
 #include <stdexcept>
+#include <random>
+#include <iostream>
+
+
+
+static constexpr std::string_view ALPHA_NUM{"0123456789!@#$%^&*abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"};
 
 /*
  * Union for swapping from little endian to big endian.
@@ -63,5 +69,7 @@ std::vector<uint32_t> string_pad_0(const std::string_view &sw) {
 }
 
 std::vector<uint8_t> hex_string_to_vector(const std::string_view &);
+
+std::string keygen(uint32_t);
 
 #endif //UTIL_H

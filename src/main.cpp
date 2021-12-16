@@ -154,6 +154,8 @@ void cli() {
 }
 
 int main() {
-    cli();
+    for (int i = 0; i < 10; ++i)
+        std::cout << keygen(16) << std::endl;
+//    cli();
 }
 

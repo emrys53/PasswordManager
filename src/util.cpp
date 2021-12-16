@@ -3,7 +3,7 @@
 //
 #include "util.h"
 
-std::vector <uint8_t> hex_string_to_vector(const std::string_view &sw) {
+std::vector<uint8_t> hex_string_to_vector(const std::string_view &sw) {
     if (sw.length() % 2 != 0) {
         throw std::invalid_argument("String has to be a multiple of 2");
     }
@@ -15,6 +15,21 @@ std::vector <uint8_t> hex_string_to_vector(const std::string_view &sw) {
         auto distance_1 = std::distance(hex_array.begin(), it_1);
         auto distance_2 = std::distance(hex_array.begin(), it_2);
         to_return.at(i / 2) = static_cast<uint8_t>(distance_2 + 16 * distance_1);
+    }
+    return to_return;
+}
+
+std::string keygen(uint32_t key_length) {
+    if (key_length > 32) {
+        key_length = 32;
+        std::cerr << "Key Length reduced to 32" << std::endl;
+    }
+    std::random_device rd{};
+    std::uniform_int_distribution<std::size_t> dist(0, ALPHA_NUM.length() - 1);
+    std::string to_return{};
+    to_return.reserve(key_length);
+    for (std::size_t i = 0; i < key_length; ++i) {
+        to_return.push_back(ALPHA_NUM.at(dist(rd)));
     }
     return to_return;
 }
