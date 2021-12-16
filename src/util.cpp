@@ -20,6 +20,12 @@ std::vector<uint8_t> hex_string_to_vector(const std::string_view &sw) {
 }
 
 std::string keygen(uint32_t key_length) {
+    if (key_length == 0) {
+        key_length = 8;
+        std::cerr << "Key Length increased to 8." << std::endl;
+
+
+    }
     if (key_length > 32) {
         key_length = 32;
         std::cerr << "Key Length reduced to 32" << std::endl;

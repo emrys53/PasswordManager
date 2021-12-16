@@ -155,7 +155,7 @@ void cli() {
 
 int main() {
     for (int i = 0; i < 10; ++i)
-        std::cout << keygen(16) << std::endl;
+        std::cout << keygen(0) << std::endl;
 //    cli();
 }
 

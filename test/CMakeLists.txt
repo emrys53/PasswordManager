@@ -9,4 +9,5 @@ function(addTest testName_ libName_)
 endfunction(addTest)
 
 add_subdirectory(sha256)
-add_subdirectory(aestest)
+add_subdirectory(aes)
+add_subdirectory(util)
