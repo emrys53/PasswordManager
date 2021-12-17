@@ -15,14 +15,14 @@ TEST_CASE("KEY LENGTH TOO SMALL") {
 }
 
 TEST_CASE("KEY LENGTH TOO BIG") {
-    const auto s = keygen(33);
+    std::string s = keygen(33);
     CHECK_EQ(s.length(), 32);
     s = keygen(64);
     CHECK_EQ(s.length(), 32);
 }
 
 TEST_CASE("KEY LENGTH NORMAL") {
-    const auto s = keygen(16);
+    std::string s = keygen(16);
     CHECK_EQ(s.length(), 16);
     s = keygen(32);
     CHECK_EQ(s.length(), 32);

@@ -9,7 +9,7 @@
  * Input: Password to use sha256 on
  * Output: Vector of uint32_t that represents the chunk of password included padding.
  */
-static std::vector<uint32_t> sha_256_pad(const std::vector<uint8_t> &input) {
+std::vector<uint32_t> sha_256_pad(const std::vector<uint8_t> &input) {
 
 
     const std::size_t input_length = input.size();
@@ -42,7 +42,7 @@ static std::vector<uint32_t> sha_256_pad(const std::vector<uint8_t> &input) {
      * Swap from little endian to big endian if the architecture is little endian.
      */
     if constexpr(std::endian::native == std::endian::little) {
-        for (std::size_t i = 0; i < (input_length + 3) / 4; ++i) {
+        for (std::size_t i = 0; i < padding_start + 1; ++i) {
             block.at(i) = swap_endian(block.at(i));
         }
     }
@@ -59,7 +59,7 @@ static std::vector<uint32_t> sha_256_pad(const std::vector<uint8_t> &input) {
  * Output: Vector of uint32_t that represents the chunk of password included padding.
  */
 
-static std::vector<uint32_t> sha_256_pad(const std::string_view &password) {
+std::vector<uint32_t> sha_256_pad(const std::string_view &password) {
     const auto input = string_to_vector(password);
     return sha_256_pad(input);
 }
@@ -115,7 +115,6 @@ static std::array<uint32_t, 8> compute_sha_256(const std::vector<uint32_t> &bloc
     }
 
     return hash_init;
-
 }
 
 std::string sha_256(const std::string_view &password) {
@@ -123,14 +122,12 @@ std::string sha_256(const std::string_view &password) {
     return sha_256(password_vector);
 }
 
-
 std::string sha_256(const std::vector<uint8_t> &password) {
     const auto hashed_values = sha_256_digest(password);
     std::string to_return;
     for (const std::size_t hashed_value : hashed_values) {
         to_return.append(std::bitset<32>(hashed_value).to_string());
     }
-
     return to_return;
 }
 
@@ -153,7 +150,7 @@ std::vector<uint8_t> sha_256_digest_to_vector(const std::string_view &password) 
 std::vector<uint8_t> sha_256_digest_to_vector(const std::vector<uint8_t> &password) {
     const auto digest = sha_256_digest(password);
     std::vector<uint8_t> to_return;
-    to_return.reserve(SHA_256_BLOCK_SIZE);
+    to_return.reserve(32);
     for (auto i : digest) {
         Endian<uint32_t> to_swap{i};
         if constexpr(std::endian::native == std::endian::big) {
@@ -166,8 +163,3 @@ std::vector<uint8_t> sha_256_digest_to_vector(const std::vector<uint8_t> &passwo
     }
     return to_return;
 }
-
-
-
-
-
