@@ -39,3 +39,9 @@ std::string keygen(uint32_t key_length) {
     }
     return to_return;
 }
+
+std::vector<uint8_t> string_to_vector(const std::string_view &sw) {
+    std::vector<uint8_t> input(sw.length());
+    std::memcpy(input.data(), sw.data(), sw.length());
+    return input;
+}

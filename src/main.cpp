@@ -5,6 +5,9 @@
 #include <fstream>
 #include <iostream>
 #include <iomanip>
+#include "hmac.h"
+
+#define LAMBDA(func_name) [](const auto &x){return func_name(x);}
 
 void cli();
 
@@ -153,9 +156,24 @@ void cli() {
     }
 }
 
+std::vector<uint8_t> foo(std::vector<uint8_t> a);
+
+std::vector<uint8_t> foo(int a, int b);
+
+template<typename Callable>
+std::vector<uint8_t> occ(const std::vector<uint8_t> &, const std::vector<uint8_t> &, Callable);
+
 int main() {
-    for (int i = 0; i < 10; ++i)
-        std::cout << keygen(0) << std::endl;
+    std::vector<uint8_t> v{1, 2, 3};
+    v.reserve(3);
+    for (int i = 0; i < 3; ++i) {
+        v.push_back(5);
+    }
+    for (int i : v) {
+        std::cout << i << std::endl;
+    }
+    hmac(v, v, LAMBDA(sha_256_digest_to_vector));
+
 //    cli();
 }
 

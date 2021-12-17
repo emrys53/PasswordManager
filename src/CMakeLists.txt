@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.1)
 set(LIBRARY_NAME MyLib)
 
 # list all the headers of the module
-set(MODULE_HEADERS util.h sha256.h aes.h)
+set(MODULE_HEADERS util.h sha256.h aes.h hmac.h)
 
 # list all the code files of the module
 set(MODULE_SOURCES sha256.cpp aes.cpp util.cpp)

@@ -22,6 +22,8 @@
 static constexpr uint8_t BIG_ENDIAN_ONE = 0x80;
 
 
+static constexpr std::size_t SHA_256_BLOCK_SIZE = 64;
+
 /*
  * Chunk size for sha256
  */
@@ -62,7 +64,15 @@ static constexpr std::array<uint32_t, 8> HASH_INITIAL_CONSTANT = {
 
 std::string sha_256(const std::string_view &password);
 
+std::string sha_256(const std::vector<uint8_t> &password);
+
 std::array<uint32_t, 8> sha_256_digest(const std::string_view &password);
+
+std::array<uint32_t, 8> sha_256_digest(const std::vector<uint8_t> &password);
+
+std::vector<uint8_t> sha_256_digest_to_vector(const std::string_view &password);
+
+std::vector<uint8_t> sha_256_digest_to_vector(const std::vector<uint8_t> &password);
 
 
 #endif //SHA256_H

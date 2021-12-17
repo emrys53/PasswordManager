@@ -72,4 +72,6 @@ std::vector<uint8_t> hex_string_to_vector(const std::string_view &);
 
 std::string keygen(uint32_t);
 
+std::vector<uint8_t> string_to_vector(const std::string_view&);
+
 #endif //UTIL_H
