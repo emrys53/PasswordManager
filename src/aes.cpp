@@ -4,17 +4,6 @@
 
 #include "aes.h"
 
-
-// For debugging purposes.
-static void print_array(std::array<std::array<uint8_t, 4>, 4> &state) {
-    for (std::size_t i = 0; i < 4; ++i) {
-        for (std::size_t j = 0; j < 4; ++j) {
-            printf("%.2X", state.at(j).at(i));
-        }
-    }
-    printf("\n");
-}
-
 void transpose_matrix(std::array<std::array<uint8_t, 4>, 4> &state) {
     for (std::size_t i = 0; i < 4; ++i) {
         for (std::size_t j = i + 1; j < 4; ++j) {

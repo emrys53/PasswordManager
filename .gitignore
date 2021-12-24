@@ -36,5 +36,5 @@ cmake-build-*/
 *.app
 
 #Temporary
-/encryption.txt
-/masterfile.txt
+/a.txt
+/b.txt

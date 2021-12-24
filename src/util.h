@@ -19,6 +19,15 @@
 
 #define LAMBDA(func_name) [](const auto &x){return func_name(x);}
 
+#ifdef _WIN32
+#define NEWLINE "\r\n"
+#elif defined macintosh // OS 9
+#define NEWLINE "\r"
+#else
+#define NEWLINE "\n" // Mac OS X uses \n
+#endif
+
+
 static constexpr std::string_view ALPHA_NUM{"0123456789!@#$%^&*abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"};
 
 
@@ -43,6 +52,8 @@ constexpr T swap_endian(T value) {
 }
 
 std::vector<uint8_t> hex_string_to_vector(const std::string_view &);
+
+std::string vector_to_hex_string(const std::vector<uint8_t> &);
 
 std::string keygen(uint32_t);
 

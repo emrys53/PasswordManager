@@ -8,6 +8,7 @@
 #include "hmac.h"
 #include <getopt.h>
 #include <algorithm>
+#include "file.h"
 
 
 void cli();
@@ -173,139 +174,145 @@ static constexpr std::string_view USAGE = R"(
 
 
 int main(int argc, char **argv) {
-    static const char *optstring = ":m:v:g:e:d:u:p:r:c:a:o:h";
-    static constexpr struct option long_options[] = {
-            {"master",   required_argument, nullptr, 'm'},
-            {"vault",    required_argument, nullptr, 'v'},
-            {"keygen",   required_argument, nullptr, 'g'},
-            {"encrypt",  required_argument, nullptr, 'e'},
-            {"decrypt",  required_argument, nullptr, 'd'},
-            {"username", required_argument, nullptr, 'u'},
-            {"password", required_argument, nullptr, 'p'},
-            {"remove",   required_argument, nullptr, 'r'},
-            {"change",   required_argument, nullptr, 'c'},
-            {"all",      no_argument,       nullptr, 'a'},
-            {"output",   required_argument, nullptr, 'o'},
-            {"help",     no_argument,       nullptr, 'h'},
-            {nullptr,    no_argument,       nullptr, 0}
-    };
-    int32_t opt;
-    int32_t optindex;
-    bool m = false;
-    bool v = false;
-    bool g = false;
-    bool e = false;
-    bool d = false;
-    bool u = false;
-    bool p = false;
-    bool r = false;
-    bool c = false;
-    bool a = false;
-    bool o = false;
-    uint32_t key_length = 0;
-    std::string user_name{};
-    std::string password{};
-    std::string id{};
-    std::string output_file{};
-    while ((opt = getopt_long(argc, argv, optstring, long_options, &optindex)) != -1) {
-        switch (opt) {
-            case 'm':
-                m = true;
-                break;
-            case 'v':
-                v = true;
-                break;
-            case 'g':
-                g = true;
-                key_length = static_cast<uint32_t>(std::strtoul(optarg, nullptr, 10));
-                break;
-            case 'e':
-                e = true;
-                id = optarg;
-                break;
-            case 'd':
-                d = true;
-                id = optarg;
-                break;
-            case 'u':
-                u = true;
-                user_name = optarg;
-                break;
-            case 'p':
-                p = true;
-                password = optarg;
-                break;
-            case 'r':
-                r = true;
-                id = optarg;
-                break;
-            case 'c':
-                c = true;
-                id = optarg;
-                break;
-            case 'a':
-                a = true;
-                break;
-            case 'o':
-                o = true;
-                output_file = optarg;
-                break;
-            case 'h':
-                std::cout << USAGE << std::endl;
-                exit(EXIT_SUCCESS);
-            case ':':
-            default:
-                std::cout << USAGE << std::endl;
-                exit(EXIT_FAILURE);
-        }
-    }
-    if (!(m && v)) {
-        std::cout << "You have to provide a vault and master file to begin any kind of operations" << std::endl;
-    }
-    if (e && d) {
-        std::cout << "You can't encrypt and decrypt at the same time" << std::endl;
-        exit(1);
-    }
+   /* std::string path = "/home/emrys/CLionProjects/PasswordManager/";
+    std::cout << verification(path + argv[1], path + argv[2]) << std::endl;
+    encrypt(path+argv[1],path+argv[2],"15","anan","ceden");*/
 
-    if (g) {
-        if (o) {
-            std::ofstream ofs{output_file, std::ios::app};
-            ofs << keygen(key_length) << std::endl;
-        } else {
-            std::cout << keygen(key_length) << std::endl;
-        }
-        exit(EXIT_SUCCESS);
-    }
-    if (a) {
-        // TODO Encrypt all Ids and output to stdout or file provided by -o
-    }
-    if (e) {
-        if (!(u && p)) {
-            std::cout << "For encryption you need password username and id" << std::endl;
-            exit(EXIT_FAILURE);
-        }
-    }
 
-    if (d) {
+    /* static const char *optstring = ":m:v:g:e:d:u:p:r:c:a:o:h";
+     static constexpr struct option long_options[] = {
+             {"master",   required_argument, nullptr, 'm'},
+             {"vault",    required_argument, nullptr, 'v'},
+             {"keygen",   required_argument, nullptr, 'g'},
+             {"encrypt",  required_argument, nullptr, 'e'},
+             {"decrypt",  required_argument, nullptr, 'd'},
+             {"username", required_argument, nullptr, 'u'},
+             {"password", required_argument, nullptr, 'p'},
+             {"remove",   required_argument, nullptr, 'r'},
+             {"change",   required_argument, nullptr, 'c'},
+             {"all",      no_argument,       nullptr, 'a'},
+             {"output",   required_argument, nullptr, 'o'},
+             {"help",     no_argument,       nullptr, 'h'},
+             {nullptr,    no_argument,       nullptr, 0}
+     };
+     int32_t opt;
+     int32_t optindex;
+     bool m = false;
+     bool v = false;
+     bool g = false;
+     bool e = false;
+     bool d = false;
+     bool u = false;
+     bool p = false;
+     bool r = false;
+     bool c = false;
+     bool a = false;
+     bool o = false;
+     uint32_t key_length = 0;
+     std::string user_name{};
+     std::string password{};
+     std::string id{};
+     std::string output_file{};
+     while ((opt = getopt_long(argc, argv, optstring, long_options, &optindex)) != -1) {
+         switch (opt) {
+             case 'm':
+                 m = true;
+                 break;
+             case 'v':
+                 v = true;
+                 break;
+             case 'g':
+                 g = true;
+                 key_length = static_cast<uint32_t>(std::strtoul(optarg, nullptr, 10));
+                 break;
+             case 'e':
+                 e = true;
+                 id = optarg;
+                 break;
+             case 'd':
+                 d = true;
+                 id = optarg;
+                 break;
+             case 'u':
+                 u = true;
+                 user_name = optarg;
+                 break;
+             case 'p':
+                 p = true;
+                 password = optarg;
+                 break;
+             case 'r':
+                 r = true;
+                 id = optarg;
+                 break;
+             case 'c':
+                 c = true;
+                 id = optarg;
+                 break;
+             case 'a':
+                 a = true;
+                 break;
+             case 'o':
+                 o = true;
+                 output_file = optarg;
+                 break;
+             case 'h':
+                 std::cout << USAGE << std::endl;
+                 exit(EXIT_SUCCESS);
+             case ':':
+             default:
+                 std::cout << USAGE << std::endl;
+                 exit(EXIT_FAILURE);
+         }
+     }
+     // TODO Implement functionalities.
+     if (!(m && v)) {
+         std::cout << "You have to provide a vault and master file to begin any kind of operations" << std::endl;
+     }
+     if (e && d) {
+         std::cout << "You can't encrypt and decrypt at the same time" << std::endl;
+         exit(1);
+     }
 
-    }
+     if (g) {
+         if (o) {
+             std::ofstream ofs{output_file, std::ios::app};
+             ofs << keygen(key_length) << std::endl;
+         } else {
+             std::cout << keygen(key_length) << std::endl;
+         }
+         exit(EXIT_SUCCESS);
+     }
+     if (a) {
+         // TODO Encrypt all Ids and output to stdout or file provided by -o
+     }
+     if (e) {
+         if (!(u && p)) {
+             std::cout << "For encryption you need password username and id" << std::endl;
+             exit(EXIT_FAILURE);
+         }
+     }
 
-    if (r) {
-        // TODO: Remove id
-    }
-    if (c) {
-        if (!(u || p)) {
-            std::cout << "To change an Id you either need a new username or new password" << std::endl;
-            exit(EXIT_FAILURE);
-        }
-        if (u) {
+     if (d) {
 
-        }
-        if (p) {
+     }
 
-        }
-        // TODO: Change by Id given username and password.
-    }
+     if (r) {
+         // TODO: Remove id
+     }
+     if (c) {
+         if (!(u || p)) {
+             std::cout << "To change an Id you either need a new username or new password" << std::endl;
+             exit(EXIT_FAILURE);
+         }
+         if (u) {
+
+         }
+         if (p) {
+
+         }
+         // TODO: Change by Id given username and password.
+     }*/
 
 
 //    cli();

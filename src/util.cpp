@@ -1,6 +1,7 @@
 //
 // Created by emrys on 09.12.21.
 //
+#include <iomanip>
 #include "util.h"
 
 std::vector<uint8_t> hex_string_to_vector(const std::string_view &sw) {
@@ -19,6 +20,14 @@ std::vector<uint8_t> hex_string_to_vector(const std::string_view &sw) {
     }
     return to_return;
 }
+
+std::string vector_to_hex_string(const std::vector<uint8_t> &v) {
+    std::ostringstream oss;
+    oss << std::hex << std::setfill('0');
+    std::for_each(v.cbegin(), v.cend(), [&oss](int c) { oss << std::setw(2) << c; });
+    return oss.str();
+}
+
 
 std::string keygen(uint32_t key_length) {
     if (key_length == 0) {
