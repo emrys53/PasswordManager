@@ -190,9 +190,11 @@ void encrypt(const std::string &vault, const std::string &master_file, const std
     switch (file_verification) {
         case EMPTY:
             encrypt_empty(vault, master_file, id, user_name, password);
+            std::cout << "Added the entry: " << "Id: " << id << " Username: " << user_name << " Password: " << password << std::endl;
             break;
         case CORRECT:
             encrypt_non_empty(vault, master_file, id, user_name, password);
+            std::cout << "Added the entry: " << "Id: " << id << " Username: " << user_name << " Password: " << password << std::endl;
             break;
         case INCORRECT:
             std::cerr << "Either vault has been tempered with or your master key is wrong" << std::endl;

@@ -51,9 +51,9 @@ std::string keygen(uint32_t key_length) {
 
 
     }
-    if (key_length > 32) {
-        key_length = 32;
-        std::cerr << "Key Length reduced to 32" << std::endl;
+    if (key_length > 256) {
+        key_length = 256;
+        std::cerr << "Key Length reduced to 256" << std::endl;
     }
     std::random_device rd{};
     std::uniform_int_distribution<std::size_t> dist(0, ALPHA_NUM.length() - 1);
