@@ -2,15 +2,14 @@
 // Created by emrys on 23.12.21.
 //
 
-#include <iomanip>
 #include "file.h"
 
 
 static std::string read_whole_file(const std::string &path) {
     std::ifstream ifs{path};
-    std::stringstream string_stream;
-    string_stream << ifs.rdbuf();
-    return string_stream.str();
+    std::stringstream ss;
+    ss << ifs.rdbuf();
+    return ss.str();
 }
 
 static std::string
@@ -50,6 +49,96 @@ static void encrypt_non_empty(const std::string &vault, const std::string &maste
 
     std::ofstream vault_file{vault, std::ios::trunc};
     vault_file << vector_to_hex_string(hmac_header) << std::endl << prev_message;
+}
+
+static std::vector<std::string> get_entries(const std::string &vault) {
+    std::ifstream ifs(vault);
+    std::vector<std::string> entries;
+    bool first = true;
+    for (std::string line; std::getline(ifs, line);) {
+        // Skip the first element which is hmac-header.
+        if (first) {
+            first = false;
+            continue;
+        }
+        entries.emplace_back(line);
+    }
+    return entries;
+}
+
+static std::vector<std::string> get_entries(const std::string &vault, const std::string_view &id) {
+    std::ifstream ifs(vault);
+    std::vector<std::string> entries;
+    bool first = true;
+    for (std::string line; std::getline(ifs, line);) {
+        if (first) {
+            first = false;
+            continue;
+        }
+        auto index = line.find(' ');
+        if (index != std::string::npos) {
+            std::string temp = line.substr(0, index);
+            if (temp == id) {
+                entries.emplace_back(line);
+            }
+        }
+    }
+    return entries;
+}
+
+static std::vector<std::string> split_by_space(const std::string &entry) {
+    std::istringstream iss{entry};
+    std::string temp;
+    std::vector<std::string> entry_vector;
+    entry_vector.reserve(3);
+    while (std::getline(iss, temp, ' ')) {
+        if (!temp.empty()) {
+            entry_vector.emplace_back(temp);
+        }
+    }
+    return entry_vector;
+}
+
+static std::string decrypt_by_id(const std::string &vault, const std::string &master_file, const std::string_view &id) {
+    auto master_key = read_whole_file(master_file);
+    const auto entries = get_entries(vault, id);
+    // Check if id even exists.
+    if (entries.empty()) {
+        std::cerr << "Nothing with given Id has been found" << std::endl;
+        return "";
+    }
+    std::stringstream ss;
+    for (const auto &entry : entries) {
+        const auto entry_vector = split_by_space(entry);
+        if (entry_vector.size() != 3) {
+            throw std::invalid_argument("Each entry has to contain exactly 3 elements");
+        }
+        const auto decrypted_user_name = vector_to_string(decrypt_aes(hex_string_to_vector(entry_vector.at(1)), sha_256_digest(master_key)));
+        const auto decrypted_password = vector_to_string(decrypt_aes(hex_string_to_vector(entry_vector.at(2)), sha_256_digest(master_key)));
+        ss << "Id: " << entry_vector.at(0) << std::endl;
+        ss << "Username: " << decrypted_user_name << std::endl;
+        ss << "Password: " << decrypted_password << std::endl;
+    }
+    return ss.str();
+}
+
+static std::string decrypt_by_id(const std::string &vault, const std::string &master_file) {
+    auto master_key = read_whole_file(master_file);
+    std::stringstream ss;
+    const auto entries = get_entries(vault);
+
+    for (const auto &entry : entries) {
+        const auto entry_vector = split_by_space(entry);
+        if (entry_vector.size() != 3) {
+            throw std::invalid_argument("Each entry has to contain exactly 3 elements");
+        }
+        const auto decrypted_user_name = vector_to_string(decrypt_aes(hex_string_to_vector(entry_vector.at(1)), sha_256_digest(master_key)));
+        const auto decrypted_password = vector_to_string(decrypt_aes(hex_string_to_vector(entry_vector.at(2)), sha_256_digest(master_key)));
+        ss << "Id: " << entry_vector.at(0) << std::endl;
+        ss << "Username: " << decrypted_user_name << std::endl;
+        ss << "Password: " << decrypted_password << std::endl;
+    }
+    return ss.str();
 }
 
 FileVerification verification(const std::string &vault, const std::string &master_file) {
@@ -96,6 +185,34 @@ void encrypt(const std::string &vault, const std::string &master_file, const std
     }
 }
 
-void decrypt(const std::string &vault, const std::string &master_file, const std::string_view &id) {
+std::string decrypt(const std::string &vault, const std::string &master_file, const std::string_view &id) {
+    FileVerification file_verification = verification(vault, master_file);
+    switch (file_verification) {
+        case EMPTY:
+            std::cerr << "The vault is empty, there is nothing to decrypt" << std::endl;
+            break;
+        case CORRECT:
+            return decrypt_by_id(vault, master_file, id);
+            break;
+        case INCORRECT:
+            std::cerr << "Either vault has been tempered with or your master key is wrong" << std::endl;
+            break;
+    }
+    return "";
+}
 
+std::string decrypt(const std::string &vault, const std::string &master_file) {
+    FileVerification file_verification = verification(vault, master_file);
+    switch (file_verification) {
+        case EMPTY:
+            std::cerr << "The vault is empty, there is nothing to decrypt" << std::endl;
+            break;
+        case CORRECT:
+            return decrypt_by_id(vault, master_file);
+            break;
+        case INCORRECT:
+            std::cerr << "Either vault has been tempered with or your master key is wrong" << std::endl;
+            break;
+    }
+    return "";
 }

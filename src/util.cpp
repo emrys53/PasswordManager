@@ -1,7 +1,6 @@
 //
 // Created by emrys on 09.12.21.
 //
-#include <iomanip>
 #include "util.h"
 
 std::vector<uint8_t> hex_string_to_vector(const std::string_view &sw) {
@@ -54,4 +53,11 @@ std::vector<uint8_t> string_to_vector(const std::string_view &sw) {
     std::vector<uint8_t> input(sw.length());
     std::memcpy(input.data(), sw.data(), sw.length());
     return input;
+}
+
+std::string vector_to_string(const std::vector<uint8_t> &v) {
+    std::string to_return{};
+    to_return.resize(v.size());
+    std::memcpy(to_return.data(), v.data(), to_return.size());
+    return to_return;
 }

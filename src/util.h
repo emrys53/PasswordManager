@@ -15,6 +15,7 @@
 #include <stdexcept>
 #include <random>
 #include <iostream>
+#include <iomanip>
 
 
 #define LAMBDA(func_name) [](const auto &x){return func_name(x);}
@@ -58,5 +59,8 @@ std::string vector_to_hex_string(const std::vector<uint8_t> &);
 std::string keygen(uint32_t);
 
 std::vector<uint8_t> string_to_vector(const std::string_view &);
+
+std::string vector_to_string(const std::vector<uint8_t> &);
+
 
 #endif //UTIL_H

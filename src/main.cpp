@@ -174,9 +174,12 @@ static constexpr std::string_view USAGE = R"(
 
 
 int main(int argc, char **argv) {
-   /* std::string path = "/home/emrys/CLionProjects/PasswordManager/";
+    std::string path = "/home/emrys/CLionProjects/PasswordManager/";
     std::cout << verification(path + argv[1], path + argv[2]) << std::endl;
-    encrypt(path+argv[1],path+argv[2],"15","anan","ceden");*/
+    encrypt(path + argv[1], path + argv[2], "17", "dsa", "asd");
+    std::cout << decrypt(path + argv[1], path + argv[2], "17") << std::endl;
+
+
 
 
     /* static const char *optstring = ":m:v:g:e:d:u:p:r:c:a:o:h";
