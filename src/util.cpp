@@ -11,8 +11,8 @@ std::vector<uint8_t> hex_string_to_vector(const std::string_view &sw) {
     std::vector<uint8_t> to_return(sw.length() / 2);
     for (std::size_t i = 0; i < sw.length(); i += 2) {
 
-        auto it_1 = std::find(hex_array.begin(), hex_array.end(), std::tolower(sw.at(i)));
-        auto it_2 = std::find(hex_array.begin(), hex_array.end(), std::tolower(sw.at(i + 1)));
+        const auto *it_1 = std::find(hex_array.begin(), hex_array.end(), std::tolower(sw.at(i)));
+        const auto *it_2 = std::find(hex_array.begin(), hex_array.end(), std::tolower(sw.at(i + 1)));
         auto distance_1 = std::distance(hex_array.begin(), it_1);
         auto distance_2 = std::distance(hex_array.begin(), it_2);
         to_return.at(i / 2) = static_cast<uint8_t>(distance_2 + 16 * distance_1);

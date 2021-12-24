@@ -256,7 +256,7 @@ std::vector<uint8_t> decrypt_aes(const std::vector<uint8_t> &output, const std::
     // Remove the padding and catch inaccurate key/output attempts.
     uint8_t pad = to_return.at(to_return.size() - 1);
     uint8_t temp = pad;
-    while (temp--) {
+    while ((temp--) != 0u) {
         uint8_t pop = to_return.back();
         if (pop != pad) {
             throw std::invalid_argument("Incorrect key or output message");
