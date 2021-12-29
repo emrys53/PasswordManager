@@ -40,8 +40,7 @@ Example Usage:
     ./PasswordManager -g master.txt -k 64 => It will create a random master key with length 64 stored in master.txt
     ./PasswordManager -m master.txt -v vault.txt -e reddit -u myusername -k 16 => It will create an entry with id reddit and username myusername with random password length 16
     ./PasswordManager -m master.txt -v vault.txt -e reddit -u myusername -p mysecretpassword => It will create an entry with id reddit and username myusername with the password mysecretpassword
-    ./PasswordManager -m master.txt -v vault.txt -d reddit => It will find all usernames and passwords with Id = reddit and print it out to stdout.
-    ./PasswordManager -m master.txt -v vault.txt -l -o output.txt => It will print out every username and password in the vault into the output.txt. If the -o is not use it will print out to stdout.)";
+    ./PasswordManager -m master.txt -v vault.txt -d reddit => It will find all usernames and passwords with Id = reddit and print it out to stdout.)";
 
 
 int main(int argc, char **argv) {
@@ -180,12 +179,7 @@ int main(int argc, char **argv) {
 
     if (l) {
         const auto temp = decrypt(vault, master_file);
-        if (o) {
-            std::ofstream ofs{output_file, std::ios::app};
-            ofs << temp << std::endl;
-        } else {
-            std::cout << temp << std::endl;
-        }
+        std::cout << temp << std::endl;
         exit(EXIT_SUCCESS);
     }
     if (e) {
@@ -207,22 +201,10 @@ int main(int argc, char **argv) {
     }
 
     if (r) {
-        // TODO: Remove id
-        // Find Id and ask user which one to remove if there are more than once and ask for permission.
         remove_by_id(vault, master_file, id);
     }
     if (c) {
-        // TODO: Change by Id given username and password.
-        if (!(u || p)) {
-            std::cout << "To change an Id you either need a new username or new password" << std::endl;
-            exit(EXIT_FAILURE);
-        }
-        if (u) {
 
-        }
-        if (p) {
-
-        }
     }
 }
 

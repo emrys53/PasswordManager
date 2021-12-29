@@ -257,7 +257,8 @@ void remove_by_id(const std::string &vault, const std::string &master_file, cons
         if (temp.at(0) == id) {
             const auto decrypted_user_name = vector_to_string(decrypt_aes(hex_string_to_vector(temp.at(1)), sha_256_digest(master_key)));
             const auto decrypted_password = vector_to_string(decrypt_aes(hex_string_to_vector(temp.at(2)), sha_256_digest(master_key)));
-            std::cout << "Do you wish to remove: " << "Id:" << id << " Username:" << decrypted_user_name << " Password:" << decrypted_password << " press Y or y: ";
+            std::cout << "Do you wish to remove: " << "Id:" << id << " Username:" << decrypted_user_name << " Password:" << decrypted_password
+                      << " press Y or y: ";
             std::string choice;
             std::cin >> choice;
             if (choice == "Y" || choice == "y") {

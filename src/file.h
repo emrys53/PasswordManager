@@ -36,6 +36,12 @@ enum FileVerification {
     INCORRECT
 };
 
+enum NameOrPassword {
+    NAME,
+    PASSWORD
+};
+
+
 FileVerification verification(const std::string &, const std::string &);
 
 void encrypt(const std::string &, const std::string &, const std::string_view &, const std::string_view &, const std::string_view &);
