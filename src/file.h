@@ -36,9 +36,9 @@ enum FileVerification {
     INCORRECT
 };
 
-enum NameOrPassword {
-    NAME,
-    PASSWORD
+enum EditOptions {
+    CHANGE,
+    REMOVE,
 };
 
 
@@ -50,7 +50,8 @@ std::string decrypt(const std::string &, const std::string &, const std::string_
 
 std::string decrypt(const std::string &, const std::string &);
 
-void remove_by_id(const std::string &, const std::string &, const std::string_view &);
+template<EditOptions>
+void edit_by_id(const std::string &, const std::string &, const std::string_view &);
 
 
 #endif //FILE_H

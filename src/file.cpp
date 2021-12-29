@@ -234,7 +234,8 @@ std::string decrypt(const std::string &vault, const std::string &master_file) {
     return "";
 }
 
-void remove_by_id(const std::string &vault, const std::string &master_file, const std::string_view &id) {
+template<EditOptions T>
+void edit_by_id(const std::string &vault, const std::string &master_file, const std::string_view &id) {
     FileVerification file_verification = verification(vault, master_file);
     if (file_verification == FileVerification::INCORRECT) {
         std::cerr << "Wrong vault file or master file" << std::endl;
@@ -242,14 +243,14 @@ void remove_by_id(const std::string &vault, const std::string &master_file, cons
     }
 
     if (file_verification == FileVerification::EMPTY) {
-        std::cerr << "The vault is empty, there is nothing to remove" << std::endl;
+        std::cerr << "The vault is empty, there is nothing to remove/change" << std::endl;
         return;
     }
     const auto master_key = read_whole_file(master_file);
     auto entries = get_entries(vault);
     for (std::size_t i = 0; i < entries.size(); ++i) {
-        const auto entry = entries.at(i);
-        const auto temp = split(entry, ' ');
+        auto &entry = entries.at(i);
+        auto temp = split(entry, ' ');
         if (temp.size() != 3) {
             throw std::invalid_argument("Each entry has to contain exactly 3 elements");
 
@@ -257,13 +258,46 @@ void remove_by_id(const std::string &vault, const std::string &master_file, cons
         if (temp.at(0) == id) {
             const auto decrypted_user_name = vector_to_string(decrypt_aes(hex_string_to_vector(temp.at(1)), sha_256_digest(master_key)));
             const auto decrypted_password = vector_to_string(decrypt_aes(hex_string_to_vector(temp.at(2)), sha_256_digest(master_key)));
-            std::cout << "Do you wish to remove: " << "Id:" << id << " Username:" << decrypted_user_name << " Password:" << decrypted_password
-                      << " press Y or y: ";
             std::string choice;
-            std::cin >> choice;
-            if (choice == "Y" || choice == "y") {
-                entries.erase(entries.begin() + static_cast<long>(i));
+            if constexpr (T == EditOptions::REMOVE) {
+                std::cout << "Do you wish to remove: " << "Id:" << id << " Username:" << decrypted_user_name << " Password:" << decrypted_password
+                          << " press Y or y: " << std::endl;
+                std::cin >> choice;
+                if (choice == "Y" || choice == "y") {
+                    entries.erase(entries.begin() + static_cast<long>(i));
+                }
+            } else if constexpr (T == EditOptions::CHANGE) {
+                std::cout << "Do you wish to edit: " << "Id:" << id << " Username:" << decrypted_user_name << " Password:" << decrypted_password
+                          << " press Y or y: " << std::endl;
+                std::cin >> choice;
+                if (choice == "Y" || choice == "y") {
+                    std::cout << "Do you wish to edit Id: " << id << " press Y or y: " << std::endl;
+                    std::cin >> choice;
+                    if (choice == "Y" || choice == "y") {
+                        std::cout << "Enter new id: " << std::endl;
+                        std::string new_id;
+                        std::cin >> new_id;
+                        temp.at(0) = new_id;
+                    }
+                    std::cout << "Do you wish to edit username: " << decrypted_user_name << " press Y or y: " << std::endl;
+                    std::cin >> choice;
+                    if (choice == "Y" || choice == "y") {
+                        std::cout << "Enter new username: " << std::endl;
+                        std::string new_user_name;
+                        std::cin >> new_user_name;
+                        temp.at(1) = vector_to_hex_string(encrypt_aes(new_user_name, sha_256_digest(master_key)));
+                    }
+                    std::cout << "Do you wish to edit password: " << decrypted_password << " press Y or y: " << std::endl;
+                    std::cin >> choice;
+                    if (choice == "Y" || choice == "y") {
+                        std::cout << "Enter new password: " << std::endl;
+                        std::string new_password;
+                        std::cin >> new_password;
+                        temp.at(2) = vector_to_hex_string(encrypt_aes(new_password, sha_256_digest(master_key)));
+                    }
+                }
             }
+            entry = temp.at(0) + " " + temp.at(1) + " " + temp.at(2);
         }
     }
     std::string new_message{};
@@ -282,3 +316,10 @@ void remove_by_id(const std::string &vault, const std::string &master_file, cons
     const auto hmac_header = hmac(hmac_key, string_to_vector(new_message), LAMBDA(sha_256_digest_to_vector));
     vault_file << vector_to_hex_string(hmac_header) << std::endl << new_message;
 }
+
+template void edit_by_id<EditOptions::CHANGE>(const std::string &vault, const std::string &master_file, const std::string_view &id);
+
+template void edit_by_id<EditOptions::REMOVE>(const std::string &vault, const std::string &master_file, const std::string_view &id);
+
+
+

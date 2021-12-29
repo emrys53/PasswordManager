@@ -31,7 +31,7 @@ static constexpr std::string_view USAGE = R"(-m --master <master_file> : After -
 -u --username <username> : To provide username use this flag. It is used in -e --encrypt along with -p --password.
 -p --password <password> : To provide password use this flag. It is used in -e --encrypt along with -u --username.
 -r --remove <Id> : Remove occurrences of given id in data base. It will ask again for confirmation so that you don't accidentally delete your passwords.
--c --change <Id> : Change the given Id with new username or new password. You need to at least specify new username or new password. Not implemented yet.
+-c --change <Id> : Change the given Id with new username or new password or new id. It is interactive as remove option.
 -l --list : It will list all ids, usernames and passwords. Takes no arguments.
 -g --generate <output_file> : It will generate a master_key in given output_file. If you want to specify password use -p. For random password use -k, --keygen.
 -h --help
@@ -166,7 +166,6 @@ int main(int argc, char **argv) {
         std::cout << keygen(key_length) << std::endl;
         exit(EXIT_SUCCESS);
     }
-    // TODO Implement functionalities.
     if (!(m && v)) {
         std::cout << "You have to provide a vault and master file to begin any kind of operations" << std::endl;
         exit(EXIT_FAILURE);
@@ -201,10 +200,10 @@ int main(int argc, char **argv) {
     }
 
     if (r) {
-        remove_by_id(vault, master_file, id);
+        edit_by_id<EditOptions::REMOVE>(vault, master_file, id);
     }
     if (c) {
-
+        edit_by_id<EditOptions::CHANGE>(vault, master_file, id);
     }
 }
 
