@@ -30,10 +30,9 @@ static constexpr std::string_view USAGE = R"(-m --master <master_file> : After -
 -d --decrypt <id> : Provide an id and it will decrypt all usernames and passwords with given id.
 -u --username <username> : To provide username use this flag. It is used in -e --encrypt along with -p --password.
 -p --password <password> : To provide password use this flag. It is used in -e --encrypt along with -u --username.
--r --remove <Id> : Remove all occurrences of given id in data base. Not implemented yet.
+-r --remove <Id> : Remove occurrences of given id in data base. It will ask again for confirmation so that you don't accidentally delete your passwords.
 -c --change <Id> : Change the given Id with new username or new password. You need to at least specify new username or new password. Not implemented yet.
 -l --list : It will list all ids, usernames and passwords. Takes no arguments.
--o --output : If specified It will write the result in specified file instead of stdout. Not completely implemented.
 -g --generate <output_file> : It will generate a master_key in given output_file. If you want to specify password use -p. For random password use -k, --keygen.
 -h --help
 Example Usage:
@@ -58,7 +57,6 @@ int main(int argc, char **argv) {
             {"remove",   required_argument, nullptr, 'r'},
             {"change",   required_argument, nullptr, 'c'},
             {"all",      no_argument,       nullptr, 'a'},
-            {"output",   required_argument, nullptr, 'o'},
             {"help",     no_argument,       nullptr, 'h'},
             {"generate", required_argument, nullptr, 'g'},
             {nullptr,    no_argument,       nullptr, 0}
@@ -75,7 +73,6 @@ int main(int argc, char **argv) {
     bool r = false;
     bool c = false;
     bool l = false;
-    bool o = false;
     bool g = false;
     uint32_t key_length = 0;
     std::string user_name{};
@@ -126,10 +123,6 @@ int main(int argc, char **argv) {
             case 'l':
                 l = true;
                 break;
-            case 'o':
-                o = true;
-                output_file = optarg;
-                break;
             case 'g':
                 g = true;
                 generated_master_file = optarg;
@@ -146,7 +139,7 @@ int main(int argc, char **argv) {
         }
     }
     // No argument is provided
-    if (!(m || v || k || e || d || u || p || r || c || l || o || g)) {
+    if (!(m || v || k || e || d || u || p || r || c || l || g)) {
         std::cout << USAGE << std::endl;
         exit(EXIT_SUCCESS);
     }
@@ -171,12 +164,7 @@ int main(int argc, char **argv) {
     }
     // keygen can be used for password when also used with encryption. So only use keygen if encryption is not asked for.
     if (k && !e) {
-        if (o) {
-            std::ofstream ofs{output_file, std::ios::app};
-            ofs << keygen(key_length) << std::endl;
-        } else {
-            std::cout << keygen(key_length) << std::endl;
-        }
+        std::cout << keygen(key_length) << std::endl;
         exit(EXIT_SUCCESS);
     }
     // TODO Implement functionalities.
@@ -214,12 +202,7 @@ int main(int argc, char **argv) {
 
     if (d) {
         const auto temp = decrypt(vault, master_file, id);
-        if (o) {
-            std::ofstream ofs{output_file, std::ios::app};
-            ofs << temp << std::endl;
-        } else {
-            std::cout << temp << std::endl;
-        }
+        std::cout << temp << std::endl;
         exit(EXIT_SUCCESS);
     }
 
