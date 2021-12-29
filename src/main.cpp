@@ -226,6 +226,7 @@ int main(int argc, char **argv) {
     if (r) {
         // TODO: Remove id
         // Find Id and ask user which one to remove if there are more than once and ask for permission.
+        remove_by_id(vault, master_file, id);
     }
     if (c) {
         // TODO: Change by Id given username and password.

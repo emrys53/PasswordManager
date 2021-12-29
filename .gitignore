@@ -36,5 +36,5 @@ cmake-build-*/
 *.app
 
 #Temporary
-/a.txt
-/b.txt
+/master.txt
+/vault.txt

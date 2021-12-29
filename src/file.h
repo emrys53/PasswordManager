@@ -44,4 +44,7 @@ std::string decrypt(const std::string &, const std::string &, const std::string_
 
 std::string decrypt(const std::string &, const std::string &);
 
+void remove_by_id(const std::string &, const std::string &, const std::string_view &);
+
+
 #endif //FILE_H

@@ -101,12 +101,12 @@ static std::vector<std::string> get_entries(const std::string &vault, const std:
     return entries;
 }
 
-static std::vector<std::string> split_by_space(const std::string &entry) {
+static std::vector<std::string> split(const std::string &entry, const char delim) {
     std::istringstream iss{entry};
     std::string temp;
     std::vector<std::string> entry_vector;
     entry_vector.reserve(3);
-    while (std::getline(iss, temp, ' ')) {
+    while (std::getline(iss, temp, delim)) {
         if (!temp.empty()) {
             entry_vector.emplace_back(temp);
         }
@@ -124,7 +124,7 @@ static std::string decrypt_by_id(const std::string &vault, const std::string &ma
     }
     std::stringstream ss;
     for (const auto &entry : entries) {
-        const auto entry_vector = split_by_space(entry);
+        const auto entry_vector = split(entry, ' ');
         if (entry_vector.size() != 3) {
             throw std::invalid_argument("Each entry has to contain exactly 3 elements");
         }
@@ -143,7 +143,7 @@ static std::string decrypt_by_id(const std::string &vault, const std::string &ma
     const auto entries = get_entries(vault);
 
     for (const auto &entry : entries) {
-        const auto entry_vector = split_by_space(entry);
+        const auto entry_vector = split(entry, ' ');
         if (entry_vector.size() != 3) {
             throw std::invalid_argument("Each entry has to contain exactly 3 elements");
         }
@@ -190,11 +190,11 @@ void encrypt(const std::string &vault, const std::string &master_file, const std
     switch (file_verification) {
         case EMPTY:
             encrypt_empty(vault, master_file, id, user_name, password);
-            std::cout << "Added the entry: " << "Id: " << id << " Username: " << user_name << " Password: " << password << std::endl;
+            std::cout << "Added the entry: " << "Id:" << id << " Username:" << user_name << " Password:" << password << std::endl;
             break;
         case CORRECT:
             encrypt_non_empty(vault, master_file, id, user_name, password);
-            std::cout << "Added the entry: " << "Id: " << id << " Username: " << user_name << " Password: " << password << std::endl;
+            std::cout << "Added the entry: " << "Id:" << id << " Username:" << user_name << " Password:" << password << std::endl;
             break;
         case INCORRECT:
             std::cerr << "Either vault has been tempered with or your master key is wrong" << std::endl;
@@ -232,4 +232,52 @@ std::string decrypt(const std::string &vault, const std::string &master_file) {
             break;
     }
     return "";
+}
+
+void remove_by_id(const std::string &vault, const std::string &master_file, const std::string_view &id) {
+    FileVerification file_verification = verification(vault, master_file);
+    if (file_verification == FileVerification::INCORRECT) {
+        std::cerr << "Wrong vault file or master file" << std::endl;
+        return;
+    }
+
+    if (file_verification == FileVerification::EMPTY) {
+        std::cerr << "The vault is empty, there is nothing to remove" << std::endl;
+        return;
+    }
+    const auto master_key = read_whole_file(master_file);
+    auto entries = get_entries(vault);
+    for (std::size_t i = 0; i < entries.size(); ++i) {
+        const auto entry = entries.at(i);
+        const auto temp = split(entry, ' ');
+        if (temp.size() != 3) {
+            throw std::invalid_argument("Each entry has to contain exactly 3 elements");
+
+        }
+        if (temp.at(0) == id) {
+            const auto decrypted_user_name = vector_to_string(decrypt_aes(hex_string_to_vector(temp.at(1)), sha_256_digest(master_key)));
+            const auto decrypted_password = vector_to_string(decrypt_aes(hex_string_to_vector(temp.at(2)), sha_256_digest(master_key)));
+            std::cout << "Do you wish to remove: " << "Id:" << id << " Username:" << decrypted_user_name << " Password:" << decrypted_password << " press Y or y: ";
+            std::string choice;
+            std::cin >> choice;
+            if (choice == "Y" || choice == "y") {
+                entries.erase(entries.begin() + static_cast<long>(i));
+            }
+        }
+    }
+    std::string new_message{};
+    std::ofstream vault_file{vault, std::ios::trunc};
+    if (entries.empty()) {
+        return;
+    }
+    for (std::size_t i = 0; i < entries.size(); ++i) {
+        const auto entry = entries.at(i);
+        new_message += entry;
+        if (i != entries.size() - 1) {
+            new_message += NEWLINE;
+        }
+    }
+    auto hmac_key = string_to_vector(master_key);
+    const auto hmac_header = hmac(hmac_key, string_to_vector(new_message), LAMBDA(sha_256_digest_to_vector));
+    vault_file << vector_to_hex_string(hmac_header) << std::endl << new_message;
 }
