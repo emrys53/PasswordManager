@@ -12,4 +12,4 @@ make
 ./PasswordManager
 ```
 
-After you compiled the binary just run ./PasswordManager -h to see how to use.
+After you compiled the binary just run ./PasswordManager -h to see how to use..
